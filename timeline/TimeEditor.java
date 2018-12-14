@@ -7,7 +7,7 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 
 public class TimeEditor extends AbstractCellEditor implements TableCellEditor {
-    TimeEditor(){
+    public TimeEditor(){
 
     }
     Object value;

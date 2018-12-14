@@ -1,14 +1,12 @@
 package client;
 
-import blackwall.BlackWall;
 import blackwall.BlackWallData;
 import basicBI.BITask;
 import datamanager.DataKey;
 import datamanager.Datas;
 import datamanager.Seriarlizer;
-import timeline.BITaskKindEditor;
+import timeline.TimeLineComponent;
 import timeline.TimeLineData;
-import timeline.TimeLineTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,19 +39,16 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener {
         setPreferredSize(new Dimension(bossData.Width, bossData.Height));
 
         //テーブルの構築
-        JTable timeLineTable=new JTable();
-        TimeLineTableModel tableModel=new TimeLineTableModel();
-            timeLineTable.setModel(tableModel);
-            timeLineTable.getColumnModel().getColumn(TimeLineData.COLUMNUM_BITASKKIND).setCellEditor(new BITaskKindEditor());
-            add(new JScrollPane(timeLineTable),BorderLayout.CENTER);
+        TimeLineComponent timeLine=new TimeLineComponent();
+        add(new JScrollPane(timeLine),BorderLayout.CENTER);
 
         JButton addTask=new JButton("タスク追加");
-            /*addTask.addActionListener(new ActionListener() {
+            addTask.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    tableModel.addRow(TimeLineData.newRow);
+                    timeLine.addRow();
                 }
-            });*/
+            });
             add(addTask,BorderLayout.SOUTH);
 
         //初期化
