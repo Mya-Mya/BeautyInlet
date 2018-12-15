@@ -5,8 +5,8 @@ import basicBI.BITask;
 import datamanager.DataKey;
 import datamanager.Datas;
 import datamanager.Seriarlizer;
-import timeline.TimeLineComponent;
-import timeline.TimeLineData;
+import timetable.TimeTableComponent;
+import timetable.TimeTableData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +30,7 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener {
         if(datas ==null) {
             datas =new Datas();
             datas.set(DataKey.BOSS,new BossData());
-            datas.set(DataKey.TIMELINE,new TimeLineData());
+            datas.set(DataKey.TIMETABLE,new TimeTableData());
             datas.set(DataKey.BLACKWALL,new BlackWallData());
         }
         //ウィンドウの構築
@@ -38,8 +38,8 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener {
         setLocation(bossData.X,bossData.Y);
         setPreferredSize(new Dimension(bossData.Width, bossData.Height));
 
-        //テーブルの構築
-        TimeLineComponent timeLine=new TimeLineComponent();
+        //タイムラインの構築
+       /* TimeLineComponent timeLine=new TimeLineComponent();
         add(new JScrollPane(timeLine),BorderLayout.CENTER);
 
         JButton addTask=new JButton("タスク追加");
@@ -49,7 +49,9 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener {
                     timeLine.addRow();
                 }
             });
-            add(addTask,BorderLayout.SOUTH);
+            add(addTask,BorderLayout.SOUTH);*/
+
+       add(new JScrollPane(new TimeTableComponent(),ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
 
         //初期化
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -78,9 +80,7 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener {
     }
 
     @Override
-    public void windowOpened(WindowEvent e) {
-
-    }
+    public void windowOpened(WindowEvent e) { }
 
     @Override
     public void windowClosing(WindowEvent e) {
