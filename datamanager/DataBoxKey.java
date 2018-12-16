@@ -1,6 +1,6 @@
 package datamanager;
 
-public enum DataKey {
+public enum DataBoxKey {
     BOSS,
     TIMETABLE,
     BLACKWALL;

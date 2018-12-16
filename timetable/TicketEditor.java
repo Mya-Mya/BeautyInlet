@@ -4,9 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Time;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Vector;
 
 public class TicketEditor extends JFrame implements ActionListener {
@@ -20,10 +18,11 @@ public class TicketEditor extends JFrame implements ActionListener {
     JTextField m;
     JTextField param1;
     JTextField param2;
+    JCheckBox enables[];
     JCheckBox done;
     JButton update;
 
-    JPanel p;
+    JPanel mainPanel;
 
     public TicketEditor(TicketUpdateMed updater, Ticket ticket){
         super();
@@ -36,18 +35,17 @@ public class TicketEditor extends JFrame implements ActionListener {
         setVisible(false);
     }
     protected void initComponent(){
-        removeAll();
 
-        p=new JPanel();
-        p.setLayout(new GridLayout(10,2));
+        mainPanel =new JPanel();
+        mainPanel.setLayout(new GridLayout(10,2));
 
         JLabel lname=new JLabel("名前");
-        p.add(lname);
+        mainPanel.add(lname);
         name=new JTextField(ticket.name);
-        p.add(name);
+        mainPanel.add(name);
 
         JLabel ltaskKing=new JLabel("種類");
-        p.add(ltaskKing);
+        mainPanel.add(ltaskKing);
 
         Vector items=new Vector();
         for(TaskKind i: TaskKind.values()){
@@ -55,45 +53,56 @@ public class TicketEditor extends JFrame implements ActionListener {
         }
         taskKind=new JComboBox(items);
         taskKind.setSelectedItem(ticket.taskKind.toString());
-        p.add(taskKind);
+        mainPanel.add(taskKind);
 
         JLabel lh=new JLabel("時");
-        p.add(lh);
-        h=new JTextField(ticket.time.get(Calendar.HOUR_OF_DAY));
-        p.add(h);
+        mainPanel.add(lh);
+        h=new JTextField(Integer.toString( ticket.time.get(Calendar.HOUR_OF_DAY)));
+        mainPanel.add(h);
 
         JLabel lm=new JLabel("分");
-        p.add(lm);
-        m=new JTextField(ticket.time.get(Calendar.MINUTE));
-        p.add(m);
+        mainPanel.add(lm);
+        m=new JTextField(Integer.toString(ticket.time.get(Calendar.MINUTE)));
+        mainPanel.add(m);
 
         JLabel lparam1=new JLabel("パラメーター1");
-        p.add(lparam1);
+        mainPanel.add(lparam1);
         param1=new JTextField(ticket.param1);
-        p. add(param1);
+        mainPanel. add(param1);
 
         JLabel lparam2=new JLabel("パラメーター2");
-        p.add(lparam2);
+        mainPanel.add(lparam2);
         param2=new JTextField(ticket.param2);
-        p.add(param2);
+        mainPanel.add(param2);
 
         //done未実装
 
+        JLabel lenables=new JLabel("実行される曜日");
+        mainPanel.add(lenables);
+        JPanel enablesPanel=new JPanel();
+            enablesPanel.setLayout(new GridLayout(1,ticket.enable.length));
+            enables=new JCheckBox[ticket.enable.length];
+            for(int i=0;i<ticket.enable.length;i++){
+                enables[i]=new JCheckBox(Ticket.enableFormat[i],ticket.enable[i]);
+                enablesPanel.add(enables[i]);
+            }
+        mainPanel.add(enablesPanel);
+
         update=new JButton("完了");
         update.addActionListener(this);
-        p.add(update);
+        mainPanel.add(update);
 
-        add(p);
+        add(mainPanel);
     }
 
     public void showUp(){
         setVisible(true);
-        p.updateUI();
+        mainPanel.updateUI();
     }
     public void setTicket(Ticket ticket){
         this.ticket=ticket;
         //initComponent();
-        p.updateUI();
+        mainPanel.updateUI();
     }
 
     @Override
@@ -109,6 +118,9 @@ public class TicketEditor extends JFrame implements ActionListener {
         );
         ticket.param1=param1.getText();
         ticket.param2=param2.getText();
+        for(int i=0;i<ticket.enable.length;i++){
+            ticket.enable[i]=enables[i].isSelected();
+        }
         updater.updateTicket(ticket);
         setVisible(false);
     }

@@ -1,6 +1,7 @@
 package basicBI;
 
 import client.ChildTaskCleaner;
+import timetable.Ticket;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
@@ -9,16 +10,18 @@ import java.awt.event.WindowListener;
 abstract public class BITask extends JFrame implements WindowListener {
     static public final int LIVE_FOREVER=-1;
     protected ChildTaskCleaner cleaner;
+    protected Ticket ticket;
 
-    public BITask(String name, ChildTaskCleaner cleaner){
-        super("BeautyInlet - "+name);
+    public BITask(ChildTaskCleaner cleaner, Ticket ticket){
+        super("BeautyInlet - "+ticket.name);
         this.cleaner=cleaner;
+        this.ticket=ticket;
         addWindowListener(this);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     public void ending(){
-        cleaner.deleteMe(this);
+        cleaner.deleteBITask(this);
         setVisible(false);
     }
 

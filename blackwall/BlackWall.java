@@ -4,23 +4,31 @@ import basicBI.BIColor;
 import basicBI.BITask;
 import client.Boss;
 import client.ChildTaskCleaner;
-import datamanager.DataKey;
+import datamanager.DataBoxKey;
+import timetable.Ticket;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class BlackWall extends BITask implements ActionListener{
     private JButton closeBut;
-    public BlackWall(String name, ChildTaskCleaner cleaner) {
-        super(name, cleaner);
+    private javax.swing.Timer timer;
+    public BlackWall(ChildTaskCleaner cleaner, Ticket ticket) {
+        super(cleaner,ticket);
         setDefaultLookAndFeelDecorated(false);
-        BlackWallData data= (BlackWallData) Boss.datas.get(DataKey.BLACKWALL);
+        BlackWallData data= (BlackWallData) Boss.dataBox.get(DataBoxKey.BLACKWALL);
         setPreferredSize(new Dimension(data.Width,data.Height));
-        setBackground(BIColor.Base);
-        setResizable(false);
+        getContentPane().setBackground(BIColor.Black);
+        setBackground(BIColor.Black);
+        setResizable(true);
         setAlwaysOnTop(true);
+
+        timer=new Timer(1000*60*50,this);
+        timer.setActionCommand("TIMER");
+        timer.start();
 
         closeBut=new JButton("閉じる");
             closeBut.setContentAreaFilled(false);
@@ -36,11 +44,15 @@ public class BlackWall extends BITask implements ActionListener{
 
     @Override
     public void ending() {
+        BlackWallData data= (BlackWallData) Boss.dataBox.get(DataBoxKey.BLACKWALL);
+        data.Width=getWidth();
+        data.Height=getHeight();
         super.ending();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals(closeBut.getActionCommand()))ending();
+        if(e.getActionCommand().equals(timer.getActionCommand()))ending();
     }
 }

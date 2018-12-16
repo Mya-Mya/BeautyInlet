@@ -3,5 +3,5 @@ package client;
 import basicBI.BITask;
 
 public interface ChildTaskCleaner {
-    public void deleteMe(BITask you);
+    public void deleteBITask(BITask you);
 }
