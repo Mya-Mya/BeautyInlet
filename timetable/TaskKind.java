@@ -3,6 +3,8 @@ package timetable;
 public enum TaskKind {
     EXIT,
     BLACKWALL,
+    TAKEWEBCAM,
+    CONFIGWEBCAM,
     DISPLAYWEB;
 
     @Override
@@ -14,6 +16,8 @@ public enum TaskKind {
         switch (k){
             case EXIT:return "終了";
             case BLACKWALL:return "黒壁";
+            case TAKEWEBCAM:return"撮影";
+            case CONFIGWEBCAM:return "ウェブカメラ設定";
             case DISPLAYWEB:return "webページ表示";
         }
         return "不明識別子";

@@ -8,7 +8,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 abstract public class BITask extends JFrame implements WindowListener {
-    static public final int LIVE_FOREVER=-1;
     protected ChildTaskCleaner cleaner;
     protected Ticket ticket;
 

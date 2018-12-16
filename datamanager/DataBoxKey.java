@@ -3,7 +3,8 @@ package datamanager;
 public enum DataBoxKey {
     BOSS,
     TIMETABLE,
-    BLACKWALL;
+    BLACKWALL,
+    WEBCAM;
 
     @Override
     public String toString() {
@@ -11,6 +12,7 @@ public enum DataBoxKey {
             case BOSS:return"boss";
             case TIMETABLE:return "timeTable";
             case BLACKWALL:return"blackWall";
+            case WEBCAM:return "webcam";
         }
         return "unknownName";
     }

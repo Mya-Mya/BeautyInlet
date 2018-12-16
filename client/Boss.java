@@ -11,6 +11,9 @@ import datamanager.Serializer;
 import timetable.Ticket;
 import timetable.TimeTableComponent;
 import timetable.TimeTableData;
+import webcam.WebcamConfig;
+import webcam.WebcamConfigData;
+import webcam.WebcamTaker;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,6 +54,7 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener, A
             dataBox.set(DataBoxKey.BOSS,new BossData());
             dataBox.set(DataBoxKey.TIMETABLE,new TimeTableData());
             dataBox.set(DataBoxKey.BLACKWALL,new BlackWallData());
+            dataBox.set(DataBoxKey.WEBCAM,new WebcamConfigData());
         }
         //ウィンドウの構築
         BossData bossData= (BossData) dataBox.get(DataBoxKey.BOSS);
@@ -132,6 +136,12 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener, A
                 break;
             case EXIT:
                 ending();
+                break;
+            case TAKEWEBCAM:
+                newTask=new WebcamTaker(this,ticket);
+                break;
+            case CONFIGWEBCAM:
+                newTask=new WebcamConfig(this,ticket);
                 break;
             case DISPLAYWEB:
                 break;
