@@ -2,7 +2,6 @@ package timetable;
 
 import basicBI.BIColor;
 import basicBI.BIFont;
-import com.sun.istack.internal.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -22,7 +21,7 @@ public class TicketUI extends JPanel implements ActionListener,TicketUpdateMed {
     JButton edit;
     JButton delete;
 
-    public TicketUI(@NotNull Ticket ticket, TicketDeleter deleter) {
+    public TicketUI( Ticket ticket, TicketDeleter deleter) {
         super();
         this.myTicket = ticket;
         editor=new TicketEditor(this,myTicket);

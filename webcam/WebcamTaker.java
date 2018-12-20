@@ -21,6 +21,8 @@ public class WebcamTaker extends BITask {
         WebcamSaver saver=new NameAfterDate();
         WebcamConfigData configData= (WebcamConfigData) Boss.dataBox.get(DataBoxKey.WEBCAM);
 
+
+
         Webcam usingCam=null;
         List<Webcam> webcams= Webcam.getWebcams();
         for(Webcam w:webcams){

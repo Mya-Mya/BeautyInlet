@@ -45,6 +45,7 @@ public class WebcamConfig extends BITask implements ActionListener {
 
         JLabel lUsingCam=new JLabel("使用するカメラ");
         add(lUsingCam);
+
         camsCombo=new JComboBox(Webcam.getWebcams().toArray());
         camsCombo.setSelectedItem(configData.usingCamName);
         add(camsCombo);
