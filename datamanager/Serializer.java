@@ -6,7 +6,6 @@ public class Serializer implements Serializable{
     private String fileName;
     public Serializer(String fileName) {
         this.fileName=new File(".").getAbsoluteFile().getParent()+"\\"+fileName;
-       // this.fileName=fileName;
         File f=new File(fileName);
         if(!f.canRead()) {
             try {

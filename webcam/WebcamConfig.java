@@ -1,6 +1,7 @@
 package webcam;
 
 import basicBI.BITask;
+import basicBI.BIUIFactory;
 import client.Boss;
 import client.ChildTaskCleaner;
 import com.github.sarxos.webcam.Webcam;
@@ -25,67 +26,64 @@ public class WebcamConfig extends BITask implements ActionListener {
     JTextField heightPx;
 
     JButton done;
+
     public WebcamConfig(ChildTaskCleaner cleaner, Ticket ticket) {
         super(cleaner, ticket);
         configData = (WebcamConfigData) Boss.dataBox.get(DataBoxKey.WEBCAM);
-        setPreferredSize(new Dimension(500,500));
+        setPreferredSize(new Dimension(500, 500));
 
-        setLayout(new GridLayout(12,4));
+        setLayout(new GridLayout(12, 4));
 
-        JLabel lSavingFolder=new JLabel("保存場所");
-        add(lSavingFolder);
-        tSavingFolder=new JTextField(configData.savingFolder);
+        add(BIUIFactory.createLabel("保存場所"));
+        tSavingFolder = new JTextField(configData.savingFolder);
         add(tSavingFolder);
-        bSavingFolder=new JButton("参照");
-        bSavingFolder.setActionCommand("SAVINGFOLDER");
-        bSavingFolder.addActionListener(this);
+
+        bSavingFolder = BIUIFactory.createButton("参照", "CHOOSEFOLDER", this);
         add(bSavingFolder);
 
         add(new JSeparator());
 
-        JLabel lUsingCam=new JLabel("使用するカメラ");
-        add(lUsingCam);
+        add(BIUIFactory.createLabel("使用するカメラ"));
 
-        camsCombo=new JComboBox(Webcam.getWebcams().toArray());
+        camsCombo = new JComboBox(Webcam.getWebcams().toArray());
         camsCombo.setSelectedItem(configData.usingCamName);
         add(camsCombo);
 
         add(new JSeparator());
 
-        JLabel lPx=new JLabel("画像サイズ");
-        widthPx=new JTextField(Integer.toString( configData.width));
+        add(BIUIFactory.createLabel("画像サイズ"));
+        widthPx = BIUIFactory.createTextField(Integer.toString(configData.width));
         widthPx.setBorder(BorderFactory.createTitledBorder("幅"));
         add(widthPx);
-        heightPx=new JTextField(Integer.toString(configData.height));
+        heightPx = BIUIFactory.createTextField(Integer.toString(configData.height));
         heightPx.setBorder(BorderFactory.createTitledBorder("高さ"));
         add(heightPx);
 
         add(new JSeparator());
 
-        done=new JButton("完了");
-        done.addActionListener(this);
+        done = BIUIFactory.createButton("完了", "DONE", this);
         add(done);
 
         pack();
         setVisible(true);
 
-        savingFolderChooser=new JFileChooser();
+        savingFolderChooser = new JFileChooser();
         savingFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals(bSavingFolder.getActionCommand())){
-            int returnVal=savingFolderChooser.showOpenDialog(this);
-            if(returnVal==JFileChooser.APPROVE_OPTION){
+        if (e.getActionCommand().equals(bSavingFolder.getActionCommand())) {
+            int returnVal = savingFolderChooser.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 tSavingFolder.setText(savingFolderChooser.getCurrentDirectory().toString());
             }
         }
-        if(e.getActionCommand().equals(done.getActionCommand())){
-            configData.savingFolder=tSavingFolder.getText();
-            configData.usingCamName= camsCombo.getSelectedItem().toString();
-            configData.width=Integer.parseInt(widthPx.getText());
-            configData.height=Integer.parseInt(heightPx.getText());
+        if (e.getActionCommand().equals(done.getActionCommand())) {
+            configData.savingFolder = tSavingFolder.getText();
+            configData.usingCamName = camsCombo.getSelectedItem().toString();
+            configData.width = Integer.parseInt(widthPx.getText());
+            configData.height = Integer.parseInt(heightPx.getText());
             ending();
         }
     }

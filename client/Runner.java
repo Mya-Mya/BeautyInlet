@@ -1,7 +1,6 @@
 package client;
 
-import basicBI.BIColor;
-import basicBI.BIFont;
+import basicBI.BIUIFactory;
 import timetable.TaskKind;
 import timetable.Ticket;
 
@@ -16,30 +15,20 @@ public class Runner extends JFrame implements ActionListener {
     JPanel mainPanel;
     JTextField param1;
     JTextField param2;
-    public Runner(RunnerMed toSend){
-        super();
-        this.toSend=toSend;
-        setPreferredSize(new Dimension(600,600));
 
-         mainPanel=new JPanel();
-        mainPanel.setLayout(new GridLayout(TaskKind.values().length+2,1));
-        mainPanel.setBackground(BIColor.Black);
-        for(TaskKind t:TaskKind.values()){
-            JButton button=new JButton(t.toString());
-            button.setContentAreaFilled(false);
-            button.setBackground(BIColor.Black);
-            button.setForeground(BIColor.White);
-            button.setFont(BIFont.enormous);
-            button.addActionListener(this);
-            button.setActionCommand(t.toString());
-            mainPanel.add(button);
-        }
-        param1=new JTextField("第一パラメーター");
-        param1.setFont(BIFont.big);
+    public Runner(RunnerMed toSend) {
+        super();
+        this.toSend = toSend;
+        setPreferredSize(new Dimension(600, 600));
+
+        mainPanel = BIUIFactory.createPanel();
+        mainPanel.setLayout(new GridLayout(TaskKind.values().length + 2, 1));
+        for (TaskKind t : TaskKind.values()) mainPanel.add(BIUIFactory.createButton(t.toString(), t.toString(), this));
+
+        param1 = BIUIFactory.createTextField("第一パラメーター");
         mainPanel.add(param1);
-        param2=new JTextField("第二パラメーター");
-        param2.setFont(BIFont.big);
-        param1.setFont(BIFont.big);
+
+        param2 = BIUIFactory.createTextField("第二パラメーター");
         mainPanel.add(param2);
 
         add(mainPanel);
@@ -48,24 +37,24 @@ public class Runner extends JFrame implements ActionListener {
         setVisible(false);
     }
 
-    public void showUP(){
+    public void showUP() {
         setVisible(true);
         mainPanel.updateUI();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String actionC= e.getActionCommand();
-        TaskKind taskKind= TaskKind.search(actionC);
-        if (taskKind==null) {
+        String acco = e.getActionCommand();
+        TaskKind taskKind = TaskKind.search(acco);
+        if (taskKind == null) {
             return;
         }
-         Ticket ticket=new Ticket();
-        ticket.isDone=false;
-        ticket.name="Runnerより起動されました : "+actionC;
-        ticket.taskKind=taskKind;
-        ticket.param1=param1.getText();
-        ticket.param2=param2.getText();
+        Ticket ticket = new Ticket();
+        ticket.isDone = false;
+        ticket.name = "Runnerより起動されました : " + acco;
+        ticket.taskKind = taskKind;
+        ticket.param1 = param1.getText();
+        ticket.param2 = param2.getText();
         toSend.runnerLaunch(ticket);
     }
 }

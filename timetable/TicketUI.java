@@ -2,13 +2,16 @@ package timetable;
 
 import basicBI.BIColor;
 import basicBI.BIFont;
+import basicBI.BIUIFactory;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 
-public class TicketUI extends JPanel implements ActionListener,TicketUpdateMed {
+public class TicketUI extends JPanel implements ActionListener, TicketUpdateMed {
     Ticket myTicket;
     TicketEditor editor;
     TicketDeleter deleter;
@@ -21,85 +24,66 @@ public class TicketUI extends JPanel implements ActionListener,TicketUpdateMed {
     JButton edit;
     JButton delete;
 
-    public TicketUI( Ticket ticket, TicketDeleter deleter) {
+    int PART_HEIGHT=30;
+
+    public TicketUI(Ticket ticket, TicketDeleter deleter) {
         super();
         this.myTicket = ticket;
-        editor=new TicketEditor(this,myTicket);
-        this.deleter=deleter;
+        editor = new TicketEditor(this, myTicket);
+        this.deleter = deleter;
 
         initComponent();
     }
-    protected void initComponent(){
+
+    protected void initComponent() {
         removeAll();
-        setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
-        setOpaque(true);
-        setBackground(BIColor.Black);
-
-        name=new JLabel(myTicket.name);
-        name.setOpaque(true);
-        name.setFont(BIFont.big);
-        name.setBackground(BIColor.Black);
-        name.setForeground(BIColor.White);
-        add(name);
-
-        taskKind=new JLabel(myTicket.taskKind.toString());
-        taskKind.setOpaque(true);
-        taskKind.setFont(BIFont.contents);
-        taskKind.setBackground(BIColor.Black);
-        taskKind.setForeground(BIColor.White);
-        add(taskKind);
-
-        time=new JLabel(
-                Integer.toString(myTicket.time.get(Calendar.HOUR_OF_DAY))
-        +":"
-        +Integer.toString(myTicket.time.get(Calendar.MINUTE)));
-        time.setOpaque(true);
-        time.setFont(BIFont.contents);
-        time.setBackground(BIColor.Black);
-        time.setForeground(BIColor.White);
+        setLayout(null);
+        //時刻
+        time=BIUIFactory.createLabel(Integer.toString(myTicket.time.get(Calendar.HOUR_OF_DAY))
+                + ":"
+                + Integer.toString(myTicket.time.get(Calendar.MINUTE))
+        );
+        time.setBounds(10,10,60,PART_HEIGHT);
         add(time);
 
-        done=new JLabel(myTicket.isDone?"本日は実行済み":"");
-        done.setOpaque(true);
+        //タスク名
+        name= BIUIFactory.createLabel(myTicket.name);
+        name.setBounds(90,10,200,PART_HEIGHT);
+        add(name);
+
+        //タスク種別
+        taskKind=BIUIFactory.createLabel(myTicket.taskKind.toString());
+        taskKind.setBounds(30,50,150,PART_HEIGHT);
+        add(taskKind);
+
+        //実行済みかどうか
+        done=BIUIFactory.createLabel(myTicket.isDone ? "済" : "");
         done.setFont(BIFont.contents);
-        done.setBackground(BIColor.Black);
-        done.setForeground(BIColor.White);
+        done.setBounds(300,10,60,PART_HEIGHT);
         add(done);
 
-        add(new JSeparator(JSeparator.HORIZONTAL));
-
-        StringBuilder enablesTextBuilder=new StringBuilder();
-        for(int i=0;i<myTicket.enable.length;i++){
-            enablesTextBuilder.append(myTicket.enable[i] ?Ticket.enableFormat[i]:"　");
+        //曜日
+        StringBuilder enablesTextBuilder = new StringBuilder();
+        for (int i = 0; i < myTicket.enable.length; i++) {
+            enablesTextBuilder.append(myTicket.enable[i] ? Ticket.enableFormat[i] : "　");
         }
-        enables=new JLabel(enablesTextBuilder.toString());
-        enables.setOpaque(true);
-        enables.setFont(BIFont.contents);
-        enables.setBackground(BIColor.Black);
-        enables.setForeground(BIColor.White);
+        enables=BIUIFactory.createLabel(enablesTextBuilder.toString());
+        enables.setBounds(300,50,130,PART_HEIGHT);
         add(enables);
 
-        edit=new JButton("編集");
-        edit.setContentAreaFilled(false);
-        edit.setFont(BIFont.contents);
-        edit.setBackground(BIColor.Black);
-        edit.setForeground(BIColor.White);
-        edit.setActionCommand("EDIT");
-        edit.addActionListener(this);
+        //ボタン
+        edit=BIUIFactory.createButton("編集","EDIT",this);
+        edit.setBounds(440,10,100,PART_HEIGHT*2);
         add(edit);
 
-        delete=new JButton("削除");
-        delete.setContentAreaFilled(false);
-        delete.setFont(BIFont.contents);
-        delete.setBackground(BIColor.Black);
-        delete.setForeground(BIColor.Accent);
-        delete.setFont(BIFont.contents);
-        delete.setActionCommand("DELETE");
-        delete.addActionListener(this);
+        delete=BIUIFactory.createButton("削除","DELET",this);
+        delete.setBounds(550,10,100,PART_HEIGHT*2);
         add(delete);
+
+        this.setBorder(BorderFactory.createLineBorder(BIColor.accent,2));
     }
 
-    protected void dataChanged(){
+    protected void dataChanged() {
         editor.setTicket(myTicket);
         initComponent();
         updateUI();
@@ -107,18 +91,18 @@ public class TicketUI extends JPanel implements ActionListener,TicketUpdateMed {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals(edit.getActionCommand())){
+        if (e.getActionCommand().equals(edit.getActionCommand())) {
             editor.setTicket(myTicket);
             editor.showUp();
         }
-        if(e.getActionCommand().equals(delete.getActionCommand())){
+        if (e.getActionCommand().equals(delete.getActionCommand())) {
             deleter.delete(myTicket);
         }
     }
 
     @Override
     public void updateTicket(Ticket ticket) {
-        this.myTicket=ticket;
+        this.myTicket = ticket;
         dataChanged();
     }
 }

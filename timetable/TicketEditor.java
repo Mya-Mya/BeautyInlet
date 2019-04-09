@@ -1,5 +1,7 @@
 package timetable;
 
+import basicBI.BIUIFactory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +15,7 @@ public class TicketEditor extends JFrame implements ActionListener {
     TicketEditor editor;
 
     JTextField name;
-    JComboBox taskKind;
+    JComboBox taskKindCombo;
     JTextField h;
     JTextField m;
     JTextField param1;
@@ -24,91 +26,86 @@ public class TicketEditor extends JFrame implements ActionListener {
 
     JPanel mainPanel;
 
-    public TicketEditor(TicketUpdateMed updater, Ticket ticket){
+    public TicketEditor(TicketUpdateMed updater, Ticket ticket) {
         super();
-        this.updater=updater;
-        this.ticket=ticket;
-        setPreferredSize(new Dimension(600,600));
+        this.updater = updater;
+        this.ticket = ticket;
+        setPreferredSize(new Dimension(600, 600));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         initComponent();
         pack();
         setVisible(false);
     }
-    protected void initComponent(){
 
-        mainPanel =new JPanel();
-        mainPanel.setLayout(new GridLayout(10,2));
+    protected void initComponent() {
 
-        JLabel lname=new JLabel("名前");
-        mainPanel.add(lname);
-        name=new JTextField(ticket.name);
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(10, 2));
+
+        mainPanel.add(BIUIFactory.createLabel("名前"));
+        name = BIUIFactory.createTextField(ticket.name);
         mainPanel.add(name);
 
-        JLabel ltaskKing=new JLabel("種類");
-        mainPanel.add(ltaskKing);
+        mainPanel.add(BIUIFactory.createLabel("種類"));
 
-        Vector items=new Vector();
-        for(TaskKind i: TaskKind.values()){
+        Vector items = new Vector();
+        for (TaskKind i : TaskKind.values()) {
             items.add(i.toString());
         }
-        taskKind=new JComboBox(items);
-        taskKind.setSelectedItem(ticket.taskKind.toString());
-        mainPanel.add(taskKind);
+        taskKindCombo = new JComboBox(items);
+        taskKindCombo.setSelectedItem(ticket.taskKind.toString());
+        mainPanel.add(taskKindCombo);
 
-        JLabel lh=new JLabel("時");
-        mainPanel.add(lh);
-        h=new JTextField(Integer.toString( ticket.time.get(Calendar.HOUR_OF_DAY)));
+        mainPanel.add(BIUIFactory.createLabel("時"));
+        h = BIUIFactory.createTextField(Integer.toString(ticket.time.get(Calendar.HOUR_OF_DAY)));
         mainPanel.add(h);
 
-        JLabel lm=new JLabel("分");
-        mainPanel.add(lm);
-        m=new JTextField(Integer.toString(ticket.time.get(Calendar.MINUTE)));
+        mainPanel.add(BIUIFactory.createLabel("分"));
+        m = BIUIFactory.createTextField(Integer.toString(ticket.time.get(Calendar.MINUTE)));
         mainPanel.add(m);
 
-        JLabel lparam1=new JLabel("パラメーター1");
-        mainPanel.add(lparam1);
-        param1=new JTextField(ticket.param1);
-        mainPanel. add(param1);
+        mainPanel.add(BIUIFactory.createLabel("パラメーター1"));
+        param1 = BIUIFactory.createTextField(ticket.param1);
+        mainPanel.add(param1);
 
-        JLabel lparam2=new JLabel("パラメーター2");
-        mainPanel.add(lparam2);
-        param2=new JTextField(ticket.param2);
+        mainPanel.add(BIUIFactory.createLabel("パラメーター2"));
+        param2 = BIUIFactory.createTextField(ticket.param2);
         mainPanel.add(param2);
 
         //done未実装
 
-        JLabel lenables=new JLabel("実行される曜日");
-        mainPanel.add(lenables);
-        JPanel enablesPanel=new JPanel();
-            enablesPanel.setLayout(new GridLayout(1,ticket.enable.length));
-            enables=new JCheckBox[ticket.enable.length];
-            for(int i=0;i<ticket.enable.length;i++){
-                enables[i]=new JCheckBox(Ticket.enableFormat[i],ticket.enable[i]);
-                enablesPanel.add(enables[i]);
-            }
+        mainPanel.add(BIUIFactory.createLabel("実行される曜日"));
+        JPanel enablesPanel = new JPanel();
+        enablesPanel.setLayout(new GridLayout(1, ticket.enable.length));
+        enables = new JCheckBox[ticket.enable.length];
+        for (int i = 0; i < ticket.enable.length; i++) {
+            enables[i] = new JCheckBox(Ticket.enableFormat[i], ticket.enable[i]);
+            enablesPanel.add(enables[i]);
+        }
         mainPanel.add(enablesPanel);
 
-        update=new JButton("完了");
+        update = BIUIFactory.createButton("完了", "EDITDONE", this);
         update.addActionListener(this);
         mainPanel.add(update);
 
         add(mainPanel);
     }
 
-    public void showUp(){
+    public void showUp() {
         setVisible(true);
         mainPanel.updateUI();
     }
-    public void setTicket(Ticket ticket){
-        this.ticket=ticket;
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
         //initComponent();
         mainPanel.updateUI();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ticket.name=name.getText();
-        ticket.taskKind=TaskKind.search((String) taskKind.getSelectedItem());
+        ticket.name = name.getText();
+        ticket.taskKind = TaskKind.search((String) taskKindCombo.getSelectedItem());
         ticket.time.set(
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
@@ -116,10 +113,10 @@ public class TicketEditor extends JFrame implements ActionListener {
                 Integer.parseInt(h.getText()),
                 Integer.parseInt(m.getText())
         );
-        ticket.param1=param1.getText();
-        ticket.param2=param2.getText();
-        for(int i=0;i<ticket.enable.length;i++){
-            ticket.enable[i]=enables[i].isSelected();
+        ticket.param1 = param1.getText();
+        ticket.param2 = param2.getText();
+        for (int i = 0; i < ticket.enable.length; i++) {
+            ticket.enable[i] = enables[i].isSelected();
         }
         updater.updateTicket(ticket);
         setVisible(false);

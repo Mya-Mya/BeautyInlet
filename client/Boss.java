@@ -2,6 +2,7 @@ package client;
 
 import basicBI.BIColor;
 import basicBI.BIFont;
+import basicBI.BIUIFactory;
 import blackwall.BlackWall;
 import blackwall.BlackWallData;
 import basicBI.BITask;
@@ -25,66 +26,59 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 
-public class Boss extends JFrame implements ChildTaskCleaner , WindowListener, ActionListener, RunnerMed {
+public class Boss extends JFrame implements ChildTaskCleaner, WindowListener, ActionListener, RunnerMed {
     Serializer serializer;
     static public DataBox dataBox;
     Timer timer;
     TimeTableComponent timeTableComponent;
     JButton showRunner;
     Runner runner;
-    private Collection<BITask> childBITasks =new ArrayList<BITask>();
+    private Collection<BITask> childBITasks = new ArrayList<>();
+    public static final int BOSS_WIDTH=700;
+    public static final int BOSS_HEIGHT=500;
 
-    public Boss(String version){
-        super("BeautyInlet -"+version);
+    public Boss(String version) {
+        super("BeautyInlet -" + version);
         //ボスフレームの仮初期化
-        setPreferredSize(new Dimension(500,500));
-        JLabel bland=new JLabel("BeautyInlet "+version);
-        bland.setFont(BIFont.enormous);
-        bland.setHorizontalAlignment(JTextField.CENTER);
-        bland.setForeground(BIColor.Assort);
-        add( bland,BorderLayout.NORTH);
+        setPreferredSize(new Dimension(BOSS_WIDTH, BOSS_HEIGHT));
+        setResizable(false);
+        add(BIUIFactory.createLabel(("BeautyInlet " + version)), BorderLayout.NORTH);
         setVisible(true);
         pack();
 
         //データの読み込み
-        serializer =new Serializer(version+".bi");
+        serializer = new Serializer(version + ".bi");
         dataBox = (DataBox) serializer.load();
-        if(dataBox ==null) {
-            dataBox =new DataBox();
-            dataBox.set(DataBoxKey.BOSS,new BossData());
-            dataBox.set(DataBoxKey.TIMETABLE,new TimeTableData());
-            dataBox.set(DataBoxKey.BLACKWALL,new BlackWallData());
-            dataBox.set(DataBoxKey.WEBCAM,new WebcamConfigData());
+        if (dataBox == null) {
+            dataBox = new DataBox();
+            dataBox.set(DataBoxKey.BOSS, new BossData());
+            dataBox.set(DataBoxKey.TIMETABLE, new TimeTableData());
+            dataBox.set(DataBoxKey.BLACKWALL, new BlackWallData());
+            dataBox.set(DataBoxKey.WEBCAM, new WebcamConfigData());
         }
         //ウィンドウの構築
-        BossData bossData= (BossData) dataBox.get(DataBoxKey.BOSS);
-        setLocation(bossData.X,bossData.Y);
-        setPreferredSize(new Dimension(bossData.Width, bossData.Height));
+        BossData bossData = (BossData) dataBox.get(DataBoxKey.BOSS);
+        setLocation(bossData.X, bossData.Y);
 
         //タイムテーブルデータの初期設定
-        TimeTableData timeTable= (TimeTableData) dataBox.get(DataBoxKey.TIMETABLE);
-        for(Ticket t:timeTable.ticketBox){
-            t.isDone=false;
-        }
+        TimeTableData timeTable = (TimeTableData) dataBox.get(DataBoxKey.TIMETABLE);
+        for (Ticket t : timeTable.ticketBox) t.isDone = false;
 
         //タイムテーブルコンポーネントの起動
-        timeTableComponent=new TimeTableComponent();
-       add(new JScrollPane(
-               timeTableComponent,
-               ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-       ),BorderLayout.CENTER);
+        timeTableComponent = new TimeTableComponent();
+        add(new JScrollPane(
+                timeTableComponent,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+        ), BorderLayout.CENTER);
 
-       //ランナーの起動
-         runner=new Runner(this);
-         showRunner =new JButton("ランナー表示");
-        showRunner.setActionCommand("SHOWRUNNER");
-        showRunner.setForeground(BIColor.Accent);
-        showRunner.addActionListener(this);
+        //ランナーの起動
+        runner = new Runner(this);
+        showRunner = BIUIFactory.createButton("ランナー表示", "SHOWRUNNER", this);
         add(showRunner, BorderLayout.SOUTH);
 
-       //タイマー起動
-        timer =new Timer(1000*5,this);
+        //タイマー起動
+        timer = new Timer(1000 * 5, this);
         timer.setActionCommand("TIMER");
         timer.start();
 
@@ -95,53 +89,51 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener, A
     }
 
     protected void ending() {
-        while (childBITasks.size()!=0) {
+        while (childBITasks.size() != 0) {
             childBITasks.iterator().next().ending();
         }
 
-        BossData bossData= (BossData) dataBox.get(DataBoxKey.BOSS);
-        bossData.X=getX();
-        bossData.Y=getY();
-        bossData.Height=getHeight();
-        bossData.Width=getWidth();
+        BossData bossData = (BossData) dataBox.get(DataBoxKey.BOSS);
+        bossData.X = getX();
+        bossData.Y = getY();
         serializer.save(dataBox);
         System.exit(0);
     }
 
-    protected void checkTimeTable(){
+    protected void checkTimeTable() {
         //タイムテーブルを引き出す
-        TimeTableData timeTable= (TimeTableData) dataBox.get(DataBoxKey.TIMETABLE);
+        TimeTableData timeTable = (TimeTableData) dataBox.get(DataBoxKey.TIMETABLE);
         //時刻と曜日を取得
-        Calendar now=Calendar.getInstance();
-        int h=now.get(Calendar.HOUR_OF_DAY);
-        int m=now.get(Calendar.MINUTE);
-        int week=now.get(Calendar.DAY_OF_WEEK)-1;//Ticketの週書式に合わせるため
+        Calendar now = Calendar.getInstance();
+        int h = now.get(Calendar.HOUR_OF_DAY);
+        int m = now.get(Calendar.MINUTE);
+        int week = now.get(Calendar.DAY_OF_WEEK) - 1;//Ticketの週書式に合わせるため
         //時刻と曜日を比べる
-        for(Ticket t: timeTable.ticketBox){
-            if(t.time.get(Calendar.HOUR_OF_DAY)==h&&
-            t.time.get(Calendar.MINUTE)==m&&
-            t.enable[week]&&
-            !t.isDone){
+        for (Ticket t : timeTable.ticketBox) {
+            if (t.time.get(Calendar.HOUR_OF_DAY) == h &&
+                    t.time.get(Calendar.MINUTE) == m &&
+                    t.enable[week] &&
+                    !t.isDone) {
                 launchTask(t);
             }
         }
     }
 
-    protected void launchTask(Ticket ticket){
-        ticket.isDone=true;
-        BITask newTask=null;
-        switch (ticket.taskKind){
+    protected void launchTask(Ticket ticket) {
+        ticket.isDone = true;
+        BITask newTask = null;
+        switch (ticket.taskKind) {
             case BLACKWALL:
-                newTask=new BlackWall(this,ticket);
+                newTask = new BlackWall(this, ticket);
                 break;
             case EXIT:
                 ending();
                 break;
             case TAKEWEBCAM:
-                newTask=new WebcamTaker(this,ticket);
+                newTask = new WebcamTaker(this, ticket);
                 break;
             case CONFIGWEBCAM:
-                newTask=new WebcamConfig(this,ticket);
+                newTask = new WebcamConfig(this, ticket);
                 break;
             case DISPLAYWEB:
                 break;
@@ -149,6 +141,7 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener, A
         timeTableComponent.dataChanged();
 
     }
+
     @Override
     public void runnerLaunch(Ticket ticket) {
         launchTask(ticket);
@@ -156,10 +149,10 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener, A
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals(timer.getActionCommand())){
+        if (e.getActionCommand().equals(timer.getActionCommand())) {
             checkTimeTable();
         }
-        if(e.getActionCommand().equals(showRunner.getActionCommand())){
+        if (e.getActionCommand().equals(showRunner.getActionCommand())) {
             runner.showUP();
         }
     }
@@ -170,7 +163,8 @@ public class Boss extends JFrame implements ChildTaskCleaner , WindowListener, A
     }
 
     @Override
-    public void windowOpened(WindowEvent e) { }
+    public void windowOpened(WindowEvent e) {
+    }
 
     @Override
     public void windowClosing(WindowEvent e) {

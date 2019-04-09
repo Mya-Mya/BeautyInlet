@@ -6,5 +6,5 @@ import java.util.List;
 
 
 public class TimeTableData implements Serializable {
-    public List<Ticket> ticketBox=new LinkedList<Ticket>();
+    public List<Ticket> ticketBox = new LinkedList<>();
 }

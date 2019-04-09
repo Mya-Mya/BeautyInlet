@@ -1,7 +1,5 @@
 package webcam;
 
-import com.github.sarxos.webcam.Webcam;
-
 import java.io.Serializable;
 
 public class WebcamConfigData implements Serializable {

@@ -1,7 +1,7 @@
 package timetable;
 
 import basicBI.BIColor;
-import basicBI.BIFont;
+import basicBI.BIUIFactory;
 import client.Boss;
 import datamanager.DataBoxKey;
 
@@ -12,52 +12,43 @@ import java.awt.event.ActionListener;
 
 public class TimeTableComponent extends JPanel implements ActionListener, TicketDeleter {
     TimeTableData data;
-    final int ticketUIHeight =40;
     JButton addButton;
-    int addButtonHeight=20;
 
-    public TimeTableComponent(){
+    public TimeTableComponent() {
         super();
         initComponent();
     }
 
-    private synchronized void initComponent(){
+    private synchronized void initComponent() {
         removeAll();
-        data= (TimeTableData) Boss.dataBox.get(DataBoxKey.TIMETABLE);
+        data = (TimeTableData) Boss.dataBox.get(DataBoxKey.TIMETABLE);
 
-        setPreferredSize(new Dimension(500,addButtonHeight+ ticketUIHeight *data.ticketBox.size()));
-        setOpaque(true);
-        setBackground(BIColor.White);
+        setBackground(BIColor.base);
 
-        LayoutManager layout=new BoxLayout(this,BoxLayout.Y_AXIS);
-        setLayout(layout);
-
-        for(Ticket i:data.ticketBox) {
-            TicketUI ticketUI = new TicketUI(i,this);
-            ticketUI.setPreferredSize(new Dimension(500, ticketUIHeight));
+        BoxLayout layout=new BoxLayout(this,BoxLayout.Y_AXIS);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setAlignmentY(2);
+        Dimension tiketUiSize=new Dimension(Boss.BOSS_WIDTH-100,80);
+        for (Ticket i : data.ticketBox) {
+            TicketUI ticketUI = new TicketUI(i, this);
+            ticketUI.setPreferredSize(tiketUiSize);
             add(ticketUI);
         }
-        addButton=new JButton("追加");
-        addButton.setContentAreaFilled(false);
-        addButton.setOpaque(true);
-        addButton.setBackground(BIColor.Black);
-        addButton.setForeground(BIColor.White);
-        addButton.setFont(BIFont.big);
-        addButton.setActionCommand("ADD");
-        addButton.setPreferredSize(new Dimension(500,addButtonHeight));
-        addButton.addActionListener(this);
+
+        addButton = BIUIFactory.createButton("＋", "ADD", this);
+        addButton.setPreferredSize(new Dimension(Boss.BOSS_WIDTH, 40));
         add(addButton);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals(addButton.getActionCommand())){
+        if (e.getActionCommand().equals(addButton.getActionCommand())) {
             data.ticketBox.add(new Ticket());
             dataChanged();
         }
     }
 
-    public void dataChanged(){
+    public void dataChanged() {
         initComponent();
         updateUI();
     }

@@ -18,30 +18,29 @@ import java.util.List;
 public class WebcamTaker extends BITask {
     public WebcamTaker(ChildTaskCleaner cleaner, Ticket ticket) {
         super(cleaner, ticket);
-        WebcamSaver saver=new NameAfterDate();
-        WebcamConfigData configData= (WebcamConfigData) Boss.dataBox.get(DataBoxKey.WEBCAM);
+        WebcamSaver saver = new NameAfterDate();
+        WebcamConfigData configData = (WebcamConfigData) Boss.dataBox.get(DataBoxKey.WEBCAM);
 
 
-
-        Webcam usingCam=null;
-        List<Webcam> webcams= Webcam.getWebcams();
-        for(Webcam w:webcams){
+        Webcam usingCam = null;
+        List<Webcam> webcams = Webcam.getWebcams();
+        for (Webcam w : webcams) {
             if (w.toString().equals(configData.usingCamName)) {
-                usingCam=w;
+                usingCam = w;
             }
         }
-        if (usingCam==null) {
+        if (usingCam == null) {
             System.out.println("設定されたカメラが見つからなかった");
             return;
         }
-        usingCam.setViewSize(new Dimension(configData.width,configData.height));
+        usingCam.setViewSize(new Dimension(configData.width, configData.height));
         usingCam.open();
-        BufferedImage image=usingCam.getImage();
+        BufferedImage image = usingCam.getImage();
         usingCam.close();
         try {
             ImageIO.write(image,
                     "jpg",
-                    new File(configData.savingFolder + "\\"+saver.getFileName()+".jpg")
+                    new File(configData.savingFolder + "\\" + saver.getFileName() + ".jpg")
             );
         } catch (IOException e) {
             e.printStackTrace();
